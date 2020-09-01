@@ -1,5 +1,5 @@
 <?php
-namespace common\models;
+namespace app\models;
 
 use Yii;
 use yii\db\ActiveRecord;
@@ -11,6 +11,12 @@ class Student extends ActiveRecord
     {
         return '{{%student}}';
     }  
+
+    public function getStudentGroupe()
+    {
+        return $this->hasOne(StudentGroupe::className(), ['id' => 'student_groupe']);
+    }
+
 
 }
 
