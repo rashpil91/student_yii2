@@ -46,7 +46,9 @@ class StudentController extends Controller
         $student = Student::find()->where(['id' => $id])->with("studentGroupe")->asArray()->one();
 
         if (!$student OR $student['falled']) return $this->goHome();
-    
+
+        Yii::$app->user->setReturnUrl(Yii::$app->request->url);
+
         return $this->render('view', ['model' => $student]);
     }
 
@@ -76,7 +78,7 @@ class StudentController extends Controller
         if (!$student OR $student->user_id != Yii::$app->user->id) return $this->goHome();
 
         $falled = $student->falled;
-
+        Yii::$app->user->setReturnUrl(Yii::$app->request->url);
         $student_groupe = StudentGroupe::find()->asArray()->all();
 
         $model = new StudentForm($student, $student_groupe);
@@ -140,6 +142,17 @@ class StudentController extends Controller
     }
 
 
+    public function actionDelete($id)
+    {
+
+        $student = Student::findOne(['id' => $id]);
+        if (!$student) return $this->goHome();
+
+        $student->delete();
+
+        return $this->goBack((!empty(Yii::$app->request->referrer) ? Yii::$app->request->referrer : null));
+    }
+
     public function actionGroupeView($id)
     {
 
@@ -196,6 +209,8 @@ class StudentController extends Controller
     public function actionIndex()
     {
         $student = Student::find()->with('studentGroupe');
+        
+        Yii::$app->user->setReturnUrl(Yii::$app->request->url);
 
         return $this->render('student', [
             'student' => $student,
