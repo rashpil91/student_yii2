@@ -12,6 +12,7 @@ use app\models\Photo;
 use app\models\PhotoUpload;
 use app\models\StudentForm;
 use app\models\StudentGroupe;
+use app\models\StudentGroupeForm;
 
 class StudentController extends Controller
 {
@@ -138,9 +139,63 @@ class StudentController extends Controller
         die(json_encode($result));
     }
 
+
+    public function actionGroupeView($id)
+    {
+
+        $student_groupe = StudentGroupe::find()->where(['id' => $id])->asArray()->one();
+        if (!$student_groupe) return $this->goHome();
+
+        $student = Student::find()->where(['student_groupe' => $id]);
+
+        return $this->render('groupe_view', [
+            'student_groupe' => $student_groupe,
+            'student' => $student
+        ]);
+    }    
+
+    public function actionGroupeProcess($id = false)
+    {
+
+        if ($id)
+        {
+            $student_groupe = StudentGroupe::findOne(['id' => $id]);
+            if (!$student_groupe) return $this->goHome();
+
+            $model = new StudentGroupeForm($student_groupe);
+            $model->scenario  = StudentGroupeForm::SCENARIO_EDIT;
+
+        } else {
+         
+            $model = new StudentGroupeForm();
+            $model->scenario  = StudentGroupeForm::SCENARIO_ADD;
+       
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save())
+        {
+
+            if ($id)
+            {
+
+                Yii::$app->session->setFlash('success', 'Изменения успешно сохранены.');
+                return $this->refresh();
+
+            } else {
+
+                Yii::$app->session->setFlash('success', 'Группа успешно добавлена');
+                return $this->redirect(['groupe-view', 'id' => $student_groupe->id]);
+
+            }
+
+        }        
+
+        return $this->render('groupe_process', ['model' => $model, 'id' => $id]);
+    }
+
     public function actionIndex()
     {
-        $student = Student::find()->all();
+        $student = Student::find()->with('studentGroupe');
 
         return $this->render('student', [
             'student' => $student,

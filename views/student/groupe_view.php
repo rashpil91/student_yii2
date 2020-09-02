@@ -12,7 +12,7 @@ use yii\grid\DataColumn;
 use yii\helpers\Url;
 use app\models\Photo;
 
-$this->title = 'Все студенты';
+$this->title = 'Группа № ' . $student_groupe['number'];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -21,6 +21,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <p>
+        Студенты
+    </p>
     <?php
 
 $dataProvider = new ActiveDataProvider([
@@ -62,11 +65,7 @@ $dataProvider = new ActiveDataProvider([
             'attribute' => 'patronymic',
             'label'     =>'Отчество'
         ],        
-        [
-            'class'     => DataColumn::className(),
-            'attribute' => 'studentGroupe.number',
-            'label'     =>'Группа'
-        ],  
+
         ['class' => 'yii\grid\ActionColumn',
             'template' => '{view} {update} {delete}',
             'buttons' =>
