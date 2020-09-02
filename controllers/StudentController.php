@@ -184,7 +184,7 @@ class StudentController extends Controller
             } else {
 
                 Yii::$app->session->setFlash('success', 'Группа успешно добавлена');
-                return $this->redirect(['groupe-view', 'id' => $student_groupe->id]);
+                return $this->redirect(['groupe-view', 'id' => $model->id]);
 
             }
 

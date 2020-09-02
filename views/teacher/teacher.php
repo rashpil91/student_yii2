@@ -10,9 +10,8 @@ use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\grid\DataColumn;
 use yii\helpers\Url;
-use app\models\Photo;
 
-$this->title = 'Студенты';
+$this->title = 'Преподаватели';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -21,12 +20,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?= Html::a('Добавить', ['process'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Добавить', ['add'], ['class' => 'btn btn-primary']) ?>
     </p>
     <?php
 
 $dataProvider = new ActiveDataProvider([
-    'query' => $student,
+    'query' => $teacher,
     'pagination' => [
         'pageSize' => 10,
     ],
@@ -37,15 +36,6 @@ $dataProvider = new ActiveDataProvider([
 <?=GridView::widget([
     'dataProvider' => $dataProvider,
     'columns' => [
-        [
-            'class'     => DataColumn::className(),
-            'attribute' => 'photo',
-            'label'     =>'Фото',
-            'format' => 'raw',
-            'value' => function ($data){
-                return $data->photo ? Html::img(Photo::getImage($data->photo), ['width' => '60px']) : "Не выбрано";
-            }
-        ],
 
         [
             'class'     => DataColumn::className(),
@@ -64,11 +54,7 @@ $dataProvider = new ActiveDataProvider([
             'attribute' => 'patronymic',
             'label'     =>'Отчество'
         ],        
-        [
-            'class'     => DataColumn::className(),
-            'attribute' => 'studentGroupe.number',
-            'label'     =>'Группа'
-        ],  
+  
         ['class' => 'yii\grid\ActionColumn',
             'template' => '{view} {update} {delete}',
             'buttons' =>
@@ -80,7 +66,7 @@ $dataProvider = new ActiveDataProvider([
                             ]); }, 
 
                     'update' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['process', 'id' => $model['id']]), [
+                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['edit', 'id' => $model['id']]), [
                                         'title' => Yii::t('yii', 'Update'),
                                         'data-pjax' => '0',
                                     ]); },                         

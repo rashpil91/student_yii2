@@ -9,6 +9,7 @@ use app\models\StudentGroupe;
 class StudentGroupeForm extends Model
 {
 
+    public $id;
     public $number;
     private $_student_groupe;
 
@@ -54,7 +55,11 @@ class StudentGroupeForm extends Model
 
         $student_groupe = $this->_student_groupe;
         $student_groupe->number = $this->number;
-        return $student_groupe->save();
+        $student_groupe->save();
+
+        $this->id = $student_groupe->id;
+
+        return true;
     }
 
 }

@@ -9,12 +9,14 @@ use yii\widgets\Pjax;
 if ($model->falled == 1)
 {
     $this->title = 'Добавление студента';
+    $this->params['breadcrumbs'][] = ['label' => "Студенты", 'url' => ['index']];
     $this->params['breadcrumbs'][] = $this->title;
     $save_button = "Добавить";
 
 } else {
 
     $this->title = 'Редактирование студента';
+    $this->params['breadcrumbs'][] = ['label' => "Студенты", 'url' => ['index']];
     $this->params['breadcrumbs'][] = ['label' => implode(" ", [$model->lastname, $model->firstname, $model->patronymic]), 'url' => ['view', 'id' => $model->id]];
     $this->params['breadcrumbs'][] = $this->title;
     $save_button = "Сохранить";
