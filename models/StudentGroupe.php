@@ -12,10 +12,6 @@ class StudentGroupe extends ActiveRecord
         return '{{%student_groupe}}';
     }
 
-    public function getStudent()
-    {
-        return $this->hasMany(Student::className(), ['student_groupe' => 'id']);
-    }
 }
 
 ?>

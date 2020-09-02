@@ -8,11 +8,21 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\Student;
+use app\models\Course;
+use app\models\Teacher;
 use app\models\StudentGroupe;
 use app\models\StudentGroupeForm;
+use app\models\StudentGroupeCourseWithTeacher;
+use app\models\StudentGroupeCourseWithTeacherForm;
 
 class StudentGroupeController extends Controller
 {
+
+    const STATUS = [
+        0 => 'На согласовании',
+        1 => 'Согласовано',
+        2 => 'Отклонено'
+    ];
 
     public function behaviors()
     {
@@ -51,6 +61,67 @@ class StudentGroupeController extends Controller
             'student' => $student
         ]);
     }    
+
+
+    public function actionCourseProcess($id = false)
+    {
+
+        $course = Course::find()->asArray()->all();
+        $student_groupe = StudentGroupe::find()->asArray()->all();
+        $teacher = Teacher::find()->asArray()->all();
+
+        if ($id)
+        {
+            $course_teacher = StudentGroupeCourseWithTeacher::findOne(['id' => $id]);
+            if (!$course_teacher) return $this->goHome();
+
+            $model = new StudentGroupeCourseWithTeacherForm($course_teacher, $course, $student_groupe, $teacher, self::STATUS);
+            $model->scenario  = StudentGroupeCourseWithTeacherForm::SCENARIO_EDIT;
+
+        } else {
+         
+            $model = new StudentGroupeCourseWithTeacherForm(false, $course, $student_groupe, $teacher, self::STATUS);
+            $model->scenario  = StudentGroupeCourseWithTeacherForm::SCENARIO_ADD;
+
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save())
+        {
+
+            if ($id)
+            {
+
+                Yii::$app->session->setFlash('success', 'Изменения успешно сохранены.');
+                return $this->refresh();
+
+            } else {
+
+                Yii::$app->session->setFlash('success', 'Группа успешно записана на курс');
+                return $this->redirect(['view', 'id' => $model->id]);
+
+            }
+
+        }        
+
+        return $this->render('course_process', [
+            'model' => $model,
+            'course' => $course,
+            'student_groupe' => $student_groupe,
+            'teacher' => $teacher,
+            'status' => self::STATUS
+        ]);
+
+    } 
+
+    public function actionCourse()
+    {
+        $model = StudentGroupeCourseWithTeacher::find()->with("courses", "teachers", "studentGroupe"); //->asArray()->all();
+        
+        return $this->render('course', [
+            'model' => $model,
+            'status' => self::STATUS
+        ]);
+    }
 
     public function actionProcess($id = false)
     {
