@@ -34,6 +34,7 @@ $dataProvider = new ActiveDataProvider([
                     ['label' => 'Группы', 'url' => '/student-groupe/'],
                     ['label' => 'Преподаватели', 'url' => '/teacher/'],
                     ['label' => 'Курсы', 'url' => '/course/'],
+                    ['label' => 'Журнал событий', 'url' => 'site/log'],
                 ],
             ],
         ]);

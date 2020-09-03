@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Log;
 use app\models\Course;
 use app\models\Teacher;
 use app\models\StudentGroupe;
@@ -212,12 +213,17 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays about page.
+     * Displays log page.
      *
      * @return string
      */
-    public function actionAbout()
+
+    public function actionLog()
     {
-        return $this->render('about');
+        $log = Log::find()->asArray();
+        
+        return $this->render('log', [
+            'log' => $log,
+        ]);
     }
 }

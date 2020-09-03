@@ -153,7 +153,7 @@ class StudentController extends Controller
         Yii::$app->session->setFlash('success', 'Студент успешно удален');
         return $this->goBack((!empty(Yii::$app->request->referrer) ? Yii::$app->request->referrer : null));
     }
-   
+
 
     public function actionIndex()
     {
