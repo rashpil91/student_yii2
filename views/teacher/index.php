@@ -11,7 +11,7 @@ use yii\grid\GridView;
 use yii\grid\DataColumn;
 use yii\helpers\Url;
 
-$this->title = 'Курсы';
+$this->title = 'Преподаватели';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -20,12 +20,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?= Html::a('Добавить', ['add'], ['class' => 'btn btn-primary']) ?>
+        <?php if (!Yii::$app->user->isGuest) echo Html::a('Добавить', ['add'], ['class' => 'btn btn-primary']) ?>
     </p>
     <?php
 
 $dataProvider = new ActiveDataProvider([
-    'query' => $course,
+    'query' => $teacher,
     'pagination' => [
         'pageSize' => 10,
     ],
@@ -39,16 +39,29 @@ $dataProvider = new ActiveDataProvider([
 
         [
             'class'     => DataColumn::className(),
-            'attribute' => 'name',
-            'label'     =>'Название'
+            'attribute' => 'lastname',
+            'label'     =>'Фамилия'
         ],
 
         [
             'class'     => DataColumn::className(),
-            'attribute' => 'time',
-            'label'     =>'Продолительность'
+            'attribute' => 'firstname',
+            'label'     =>'Имя'
+        ],
+
+        [
+            'class'     => DataColumn::className(),
+            'attribute' => 'patronymic',
+            'label'     =>'Отчество'
         ],        
-  
+
+        [
+            'class'     => DataColumn::className(),
+            'attribute' => 'courseCount.count',
+            'label'     =>'Кол-во курсов',
+            
+        ],         
+
         ['class' => 'yii\grid\ActionColumn',
             'template' => '{view} {update} {delete}',
             'buttons' =>
@@ -60,15 +73,17 @@ $dataProvider = new ActiveDataProvider([
                             ]); }, 
 
                     'update' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['edit', 'id' => $model['id']]), [
+                                return Yii::$app->user->isGuest ? false : Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['edit', 'id' => $model['id']]), [
                                         'title' => Yii::t('yii', 'Update'),
                                         'data-pjax' => '0',
                                     ]); },                         
 
                     'delete' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['delete','id' => $model['id']]), [
+                                return Yii::$app->user->isGuest ? false : Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['delete','id' => $model['id']]), [
                                         'title' => Yii::t('yii', 'Delete'),
-                                        'data-confirm' => "Вы уверены, что хотите удалить этот курс? Вместе с ним будут удалены все связанные записи",
+                                        'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
+                                        'data-method' => 'post',
+                                        'data-pjax' => '0',
                                     ]);
                         }
                 ]

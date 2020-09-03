@@ -37,8 +37,27 @@ class StudentForm extends Model
 
         return [
             [['firstname', 'lastname', 'patronymic', 'student_groupe'], 'required'],
+            ['firstname', 'unique_check'],
             ['student_groupe', 'in', 'allowArray' => true,  'range' => $this->_student_groupe]
         ];
+    }
+
+    public function unique_check($attribute, $param)
+    {
+
+        $query = Student::find();
+        $query->where(['firstname' => $this->firstname]);
+        $query->andWhere(['lastname' => $this->lastname]);
+        $query->andWhere(['patronymic' => $this->patronymic]);
+        $query->andWhere(['!=', 'id', $this->_student->id]);
+
+        if ($query->count())
+        {
+            $this->addError($attribute, "Студент с этим ФИО уже есть в базе");
+            return false;
+        }  
+
+        return true;
     }
 
     public function attributeLabels()

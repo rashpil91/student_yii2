@@ -19,18 +19,23 @@ class Student extends Behavior
         ];
     }
 
+    private function insertLog($event, $extra)
+    {
+        $log = new Log();
+        $log->date = time();
+        $log->user_id = Yii::$app->user->id;
+        $log->ip = Yii::$app->request->userIP;
+        $log->event = $event;
+        $log->extra = $extra;
+        $log->save();       
+    }
+
     public function afterSave($event)
     {
 
         if (isset($event->changedAttributes['falled']) AND $event->sender['falled'] == 0)
         {
-            $log = new Log();
-            $log->date = time();
-            $log->user_id = Yii::$app->user->id;
-            $log->ip = Yii::$app->request->userIP;
-            $log->event = 1;
-            $log->extra = implode(" ", [$event->sender['lastname'], $event->sender['firstname'], $event->sender['patronymic']]);
-            $log->save();
+            $this->insertLog(1, implode(" ", [$event->sender['lastname'], $event->sender['firstname'], $event->sender['patronymic']]));
         }
 
     }
@@ -47,13 +52,8 @@ class Student extends Behavior
             if (file_exists($image_path_thumb)) @unlink($image_path_thumb);           
         }
 
-        $log = new Log();
-        $log->date = time();
-        $log->user_id = Yii::$app->user->id;
-        $log->ip = Yii::$app->request->userIP;
-        $log->event = 2;
-        $log->extra = implode(" ", [$event->sender['lastname'], $event->sender['firstname'], $event->sender['patronymic']]);
-        $log->save();
+        $this->insertLog(2, implode(" ", [$event->sender['lastname'], $event->sender['firstname'], $event->sender['patronymic']]));
+
     }
 }
 

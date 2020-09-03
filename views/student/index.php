@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?= Html::a('Добавить', ['process'], ['class' => 'btn btn-primary']) ?>
+        <?php if (!!Yii::$app->user->isGuest) echo Html::a('Добавить', ['process'], ['class' => 'btn btn-primary']) ?>
     </p>
     <?php
 
@@ -80,13 +80,13 @@ $dataProvider = new ActiveDataProvider([
                             ]); }, 
 
                     'update' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['process', 'id' => $model['id']]), [
+                                return Yii::$app->user->isGuest ? false : Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['process', 'id' => $model['id']]), [
                                         'title' => Yii::t('yii', 'Update'),
                                         'data-pjax' => '0',
                                     ]); },                         
 
                     'delete' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['delete','id' => $model['id']]), [
+                                return Yii::$app->user->isGuest ? false : Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['delete','id' => $model['id']]), [
                                         'title' => Yii::t('yii', 'Delete'),
                                         'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
                                         'data-method' => 'post',

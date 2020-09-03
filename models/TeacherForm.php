@@ -35,12 +35,40 @@ class TeacherForm extends Model
             $this->_teacher = new Teacher();
 
     }
+    
+    public function scenarios()
+    {
+
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_ADD] = $scenarios[self::SCENARIO_DEFAULT];
+        $scenarios[self::SCENARIO_EDIT] = $scenarios[self::SCENARIO_DEFAULT];
+        return $scenarios;
+    }
 
     public function rules()
     {
         return [
             [['firstname', 'lastname', 'patronymic'], 'required'],
+            ['firstname', 'unique_check'],
         ];
+    }
+
+    public function unique_check($attribute, $param)
+    {
+
+        $query = Teacher::find();
+        $query->where(['firstname' => $this->firstname]);
+        $query->andWhere(['lastname' => $this->lastname]);
+        $query->andWhere(['patronymic' => $this->patronymic]);
+        if ($this->scenario == self::SCENARIO_EDIT) $query->andWhere(['!=', 'id', $this->_teacher->id]);
+
+        if ($query->count())
+        {
+            $this->addError($attribute, "Преподаватель с этим ФИО уже есть в базе");
+            return false;
+        }  
+
+        return true;
     }
 
     public function attributeLabels()

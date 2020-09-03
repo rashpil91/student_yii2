@@ -44,7 +44,7 @@ $teacher = $teacher_formated;
 
                 <?= $form->field($model, 'teacher')->dropDownList($teacher) ?>
 
-                <?= $form->field($model, 'status')->dropDownList($status) ?>
+                <?php if (!empty($id)) echo $form->field($model, 'status')->dropDownList($status) ?>
 
                 <div class="form-group">
                     <?= Html::submitButton($save_button, ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>

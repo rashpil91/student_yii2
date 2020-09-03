@@ -14,6 +14,28 @@ use app\models\StudentGroupeCourseWithTeacher;
 class TeacherController extends Controller
 {
 
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'view', 'add', 'edit', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index', 'view'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['index', 'view', 'add', 'edit','delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionView($id)
     {
         $teacher = Teacher::find()->where(['id' => $id])->asArray()->one();
@@ -76,7 +98,7 @@ class TeacherController extends Controller
 
         Yii::$app->user->setReturnUrl(Yii::$app->request->url);
 
-        return $this->render('teacher', [
+        return $this->render('index', [
             'teacher' => $teacher,
         ]);
     }

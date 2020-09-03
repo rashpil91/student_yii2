@@ -30,13 +30,19 @@ class SiteController extends Controller
      */
     public function behaviors()
     {
+
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => ['index', 'view', 'process', 'login', 'delete', 'logout', 'log'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['index', 'view', 'login', 'contact'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['index', 'view', 'process', 'delete', 'logout', 'log'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -49,6 +55,7 @@ class SiteController extends Controller
                 ],
             ],
         ];
+
     }
 
     /**

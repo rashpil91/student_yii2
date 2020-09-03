@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1>Профиль преподавателя</h1>
 
-    <?php if ($model['id'] == Yii::$app->user->id OR 1 == 1): ?>
+    <?php if (!Yii::$app->user->isGuest): ?>
     <p>
             <div class="btn-group">
                 <?= Html::a('Редактировать', ['edit', 'id' => $model['id']], ['class' => 'btn btn-primary']) ?>

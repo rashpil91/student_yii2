@@ -37,9 +37,9 @@ class StudentGroupeCourseWithTeacherForm extends Model
 
             $this->_course_teacher = $course_teacher;
         
-        } else 
+        } else
             $this->_course_teacher = new StudentGroupeCourseWithTeacher();
-
+        
         $this->_course = ArrayHelper::getColumn($course, 'id');
         $this->_student_groupe = ArrayHelper::getColumn($student_groupe, 'id');
         $this->_teacher = ArrayHelper::getColumn($teacher, 'id');
@@ -50,11 +50,12 @@ class StudentGroupeCourseWithTeacherForm extends Model
     public function rules()
     {
         return [
-            [['status', 'student_groupe', 'course', 'teacher'], 'required'],
+            [['student_groupe', 'course', 'teacher'], 'required'],
+            ['status', 'required'],
             ['course', 'in', 'allowArray' => true,  'range' => $this->_course],
             ['student_groupe', 'in', 'allowArray' => true,  'range' => $this->_student_groupe],
             ['teacher', 'in', 'allowArray' => true,  'range' => $this->_teacher],
-            ['status', 'in', 'allowArray' => true,  'range' => $this->_status],
+            ['status', 'in', 'allowArray' => true,  'range' => $this->_status, 'on' => self::SCENARIO_EDIT],
             ['student_groupe', 'unique_check']
  
         ];

@@ -18,24 +18,22 @@ class CourseController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => ['index', 'view', 'add', 'edit', 'delete'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['index', 'view'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['index', 'view', 'add', 'edit','delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
         ];
     }
-
 
     public function actionView($id)
     {
@@ -100,7 +98,7 @@ class CourseController extends Controller
         
         Yii::$app->user->setReturnUrl(Yii::$app->request->url);
 
-        return $this->render('course', [
+        return $this->render('index', [
             'course' => $course,
         ]);
     }

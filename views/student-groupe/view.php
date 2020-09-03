@@ -29,6 +29,9 @@ $dataProviderStudent = new ArrayDataProvider([
 <div class="role-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
+
+        <?php if (!Yii::$app->user->isGuest): ?>
+
         <p>
             <div class="btn-group">
                 <?= Html::a('Редактировать', ['process', 'id' => $student_groupe['id']], ['class' => 'btn btn-primary']) ?>
@@ -36,6 +39,7 @@ $dataProviderStudent = new ArrayDataProvider([
             </div>
         </p>
 
+        <?php endif; ?>
 
         <h1>Изучает курсы</h1>
 
