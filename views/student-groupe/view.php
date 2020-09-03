@@ -149,13 +149,13 @@ $dataProviderStudent = new ArrayDataProvider([
                             ]); }, 
 
                     'update' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['student/process', 'id' => $model['id']]), [
+                                return Yii::$app->user->isGuest ? false : Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['student/process', 'id' => $model['id']]), [
                                         'title' => Yii::t('yii', 'Update'),
                                         'data-pjax' => '0',
                                     ]); },                         
 
                     'delete' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['student/delete','id' => $model['id']]), [
+                                return Yii::$app->user->isGuest ? false : Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['student/delete','id' => $model['id']]), [
                                         'title' => Yii::t('yii', 'Delete'),
                                         'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
                                         'data-method' => 'post',

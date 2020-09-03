@@ -125,8 +125,8 @@ $dataProvider = new ArrayDataProvider([
                                 'target' => '_blank',
                             ]); }, 
 
-                    'update' => Yii::$app->user->isGuest ? false : function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['student/process', 'id' => $model['id']]), [
+                    'update' =>  function ($url, $model) {
+                                return Yii::$app->user->isGuest ? false : Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['student/process', 'id' => $model['id']]), [
                                         'title' => Yii::t('yii', 'Update'),
                                         'target' => '_blank',
                                     ]); },                         
