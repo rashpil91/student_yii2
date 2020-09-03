@@ -7,12 +7,14 @@ use yii\bootstrap\ActiveForm;
 if (!$id)
 {
     $this->title = 'Новая группа';
+    $this->params['breadcrumbs'][] = ['label' => "Группы", 'url' => ['student-groupe/index']];
     $this->params['breadcrumbs'][] = $this->title;
     $save_button = "Добавить";
 
 } else {
 
     $this->title = 'Редактирование группы';
+    $this->params['breadcrumbs'][] = ['label' => "Группы", 'url' => ['student-groupe/index']];
     $this->params['breadcrumbs'][] = ['label' => "Группа №" . $model->number, 'url' => ['view', 'id' => $id]];
     $this->params['breadcrumbs'][] = $this->title;
     $save_button = "Сохранить";

@@ -1,53 +1,116 @@
 <?php
 
-/* @var $this yii\web\View */
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use yii\data\ActiveDataProvider;
+use yii\grid\GridView;
+use yii\grid\DataColumn;
+use yii\helpers\Url;
+use yii\bootstrap\ButtonDropdown;
 
-$this->title = 'My Yii Application';
+$this->title = "Курсы для групп";
+
+$dataProvider = new ActiveDataProvider([
+    'query' => $model,
+    'pagination' => [
+        'pageSize' => 50,
+    ],
+]);
+
 ?>
-<div class="site-index">
 
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
+<div class="role-index">
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
+    <h1><?= Html::encode($this->title) ?></h1>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
+    <p>
+        <div class="btn-group">
+        <?= Html::a('Записать', ['process'], ['class' => 'btn btn-primary']) ?>
+        <?= ButtonDropdown::widget([
+            'label' => 'Справочники',
+            'dropdown' => [
+                'items' => [
+                    ['label' => 'Студенты', 'url' => '/student/'],
+                    ['label' => 'Группы', 'url' => '/student-groupe/'],
+                    ['label' => 'Преподаватели', 'url' => '/teacher/'],
+                    ['label' => 'Курсы', 'url' => '/course/'],
+                ],
+            ],
+        ]);
+        ?>
         </div>
+    </p>
 
-    </div>
+<?=GridView::widget([
+    'dataProvider' => $dataProvider,
+    'columns' => [
+        [
+            'class'     => DataColumn::className(),
+            'attribute' => 'studentGroupe.number',
+            'label'     =>'Группа'
+        ],        
+        [
+            'class'     => DataColumn::className(),
+            'attribute' => 'courses.name',
+            'label'     =>'Название курса'
+        ],
+        [
+            'class'     => DataColumn::className(),
+            'attribute' => 'courses.time',
+            'filter' => true,
+            'label'     =>'Продолжительность'
+        ],
+        [
+            'class'     => DataColumn::className(),
+            'label'     =>'Преподаватель',
+            'attribute' => 'teachers',
+            'value' => function ($data){
+                return implode(" ", [$data['teachers']['lastname'], $data['teachers']['firstname'], $data['teachers']['patronymic']]);
+            }
+        ],      
+        [
+            'class'     => DataColumn::className(),
+            'attribute' => 'status',
+            'label'     =>'Статус',
+            'value' => function ($data) {
+                
+                $status = [
+                    0 => 'На согласовании',
+                    1 => 'Согласовано',
+                    2 => 'Отклонено'
+                ];
+
+                return $status[$data['status']];
+            }
+        ],
+        ['class' => 'yii\grid\ActionColumn',
+            'template' => '{view} {update} {delete}',
+            'buttons' =>
+                [
+                    'view' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::toRoute(['view', 'id' => $model['id']]), [
+                                'title' => Yii::t('yii', 'View'),
+                                'data-pjax' => '0',
+                            ]); }, 
+
+                    'update' => function ($url, $model) {
+                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Url::toRoute(['process', 'id' => $model['id']]), [
+                                        'title' => Yii::t('yii', 'Update'),
+                                        'data-pjax' => '0',
+                                    ]); },                         
+
+                    'delete' => function ($url, $model) {
+                                return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['delete','id' => $model['id']]), [
+                                        'title' => Yii::t('yii', 'Delete'),
+                                        'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
+                                        'data-method' => 'post',
+                                        'data-pjax' => '0',
+                                    ]);
+                        }
+                ]
+        ],
+        ]
+    ]);
+?>
+
 </div>

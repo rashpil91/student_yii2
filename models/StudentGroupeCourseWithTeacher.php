@@ -27,6 +27,11 @@ class StudentGroupeCourseWithTeacher extends ActiveRecord
         return $this->hasOne(StudentGroupe::className(), ['id' => 'student_groupe']);
     }
 
+    public function getStudent()
+    {
+        return $this->hasMany(Student::className(), ['student_groupe' => 'id'])->where(['falled' => 0])->via('studentGroupe');
+
+    } 
 }
 
 ?>

@@ -39,9 +39,12 @@ class CourseController extends Controller
 
     public function actionView($id)
     {
-        $course = Course::find()->where(['id' => $id])->asArray()->one();
+        $course = Course::find()->where(['id' => $id])->with('studentGroupe', 'teacher')->asArray()->one();
+
         if (!$course) return $this->goHome();
-    
+
+        Yii::$app->user->setReturnUrl(Yii::$app->request->url);
+
         return $this->render('view', ['model' => $course]);
     }    
 
@@ -80,9 +83,22 @@ class CourseController extends Controller
 
     }
 
+    public function actionDelete($id)
+    {
+        $course = Course::findOne(['id' => $id]);
+        if (!$course) return $this->goHome();
+
+        $course->delete(); 
+        
+        Yii::$app->session->setFlash('success', 'Курс успешно удален');
+        return $this->goBack((!empty(Yii::$app->request->referrer) ? Yii::$app->request->referrer : null));
+    }
+
     public function actionIndex()
     {
         $course = Course::find();
+        
+        Yii::$app->user->setReturnUrl(Yii::$app->request->url);
 
         return $this->render('course', [
             'course' => $course,

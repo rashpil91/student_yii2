@@ -13,8 +13,7 @@ if (empty($id))
 
 } else {
 
-    $this->title = 'Редактирование группы';
-//    $this->params['breadcrumbs'][] = ['label' => "Группа №" . $model->number, 'url' => ['view', 'id' => $id]];
+    $this->title = 'Редактирование курса для группы';
     $this->params['breadcrumbs'][] = $this->title;
     $save_button = "Сохранить";
 }

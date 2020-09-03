@@ -43,7 +43,7 @@ class StudentController extends Controller
 
     public function actionView($id)
     {
-        $student = Student::find()->where(['id' => $id])->with("studentGroupe")->asArray()->one();
+        $student = Student::find()->where(['id' => $id])->with("sgct")->asArray()->one();
 
         if (!$student OR $student['falled']) return $this->goHome();
 
@@ -150,69 +150,18 @@ class StudentController extends Controller
 
         $student->delete();
 
+        Yii::$app->session->setFlash('success', 'Студент успешно удален');
         return $this->goBack((!empty(Yii::$app->request->referrer) ? Yii::$app->request->referrer : null));
     }
-
-    public function actionGroupeView($id)
-    {
-
-        $student_groupe = StudentGroupe::find()->where(['id' => $id])->asArray()->one();
-        if (!$student_groupe) return $this->goHome();
-
-        $student = Student::find()->where(['student_groupe' => $id]);
-
-        return $this->render('groupe_view', [
-            'student_groupe' => $student_groupe,
-            'student' => $student
-        ]);
-    }    
-
-    public function actionGroupeProcess($id = false)
-    {
-
-        if ($id)
-        {
-            $student_groupe = StudentGroupe::findOne(['id' => $id]);
-            if (!$student_groupe) return $this->goHome();
-
-            $model = new StudentGroupeForm($student_groupe);
-            $model->scenario  = StudentGroupeForm::SCENARIO_EDIT;
-
-        } else {
-         
-            $model = new StudentGroupeForm();
-            $model->scenario  = StudentGroupeForm::SCENARIO_ADD;
-       
-        }
-
-        if ($model->load(Yii::$app->request->post()) && $model->save())
-        {
-
-            if ($id)
-            {
-
-                Yii::$app->session->setFlash('success', 'Изменения успешно сохранены.');
-                return $this->refresh();
-
-            } else {
-
-                Yii::$app->session->setFlash('success', 'Группа успешно добавлена');
-                return $this->redirect(['groupe-view', 'id' => $model->id]);
-
-            }
-
-        }        
-
-        return $this->render('groupe_process', ['model' => $model, 'id' => $id]);
-    }
+   
 
     public function actionIndex()
     {
-        $student = Student::find()->with('studentGroupe');
+        $student = Student::find()->where(['falled' => 0])->with('studentGroupe');
         
         Yii::$app->user->setReturnUrl(Yii::$app->request->url);
 
-        return $this->render('student', [
+        return $this->render('index', [
             'student' => $student,
         ]);
     }

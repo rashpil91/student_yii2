@@ -55,7 +55,7 @@ class StudentGroupeCourseWithTeacherForm extends Model
             ['student_groupe', 'in', 'allowArray' => true,  'range' => $this->_student_groupe],
             ['teacher', 'in', 'allowArray' => true,  'range' => $this->_teacher],
             ['status', 'in', 'allowArray' => true,  'range' => $this->_status],
-            ['student_groupe', 'unique_check', 'on' => self::SCENARIO_ADD]
+            ['student_groupe', 'unique_check']
  
         ];
     }
@@ -70,11 +70,29 @@ class StudentGroupeCourseWithTeacherForm extends Model
         ];
     }
 
+    public function scenarios()
+    {
+
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_ADD] = $scenarios[self::SCENARIO_DEFAULT];
+        $scenarios[self::SCENARIO_EDIT] = $scenarios[self::SCENARIO_DEFAULT];
+        return $scenarios;
+    }
+
     public function unique_check($attribute, $param)
     {
-        if (StudentGroupeCourseWithTeacher::find()->where(['student_groupe' => $param])->andWhere(['teacher' => $this->$teacher])->andWhere(['course' => $this->$course])->andWhere(['!=', 'id', $this->$_course_teacher->id])->count())
+
+        $query = StudentGroupeCourseWithTeacher::find();
+        $query->where(['student_groupe' => $this->$attribute]);
+        $query->andWhere(['teacher' => $this->teacher]);
+        $query->andWhere(['course' => $this->course]);
+
+        if ($this->scenario == self::SCENARIO_EDIT)
+            $query->andWhere(['!=', 'id', $this->_course_teacher->id]);
+
+        if ($query->count())
         {
-            $this->addError($this->attribute, "Группа уже записана на выбранный курс с этим преподавателем.");
+            $this->addError($attribute, "Группа уже записана на выбранный курс с этим преподавателем.");
             return false;
         }  
 

@@ -54,7 +54,14 @@ $dataProvider = new ActiveDataProvider([
             'attribute' => 'patronymic',
             'label'     =>'Отчество'
         ],        
-  
+
+        [
+            'class'     => DataColumn::className(),
+            'attribute' => 'courseCount.count',
+            'label'     =>'Кол-во курсов',
+            
+        ],         
+
         ['class' => 'yii\grid\ActionColumn',
             'template' => '{view} {update} {delete}',
             'buttons' =>

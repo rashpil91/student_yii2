@@ -9,40 +9,21 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\Teacher;
 use app\models\TeacherForm;
+use app\models\StudentGroupeCourseWithTeacher;
 
 class TeacherController extends Controller
 {
-
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
-
 
     public function actionView($id)
     {
         $teacher = Teacher::find()->where(['id' => $id])->asArray()->one();
         if (!$teacher) return $this->goHome();
     
-        return $this->render('view', ['model' => $teacher]);
+        Yii::$app->user->setReturnUrl(Yii::$app->request->url);
+
+        $student_groupe_course = StudentGroupeCourseWithTeacher::find()->where(['teacher' => $id])->with("courses", "studentGroupe");
+
+        return $this->render('view', ['model' => $teacher, 'student_groupe_course' => $student_groupe_course]);
     }    
 
     public function actionAdd()
@@ -78,9 +59,22 @@ class TeacherController extends Controller
 
     }
 
+    public function actionDelete($id)
+    {
+        $teacher = Teacher::findOne(['id' => $id]);
+        if (!$teacher) return $this->goHome();
+
+        $teacher->delete(); 
+        
+        Yii::$app->session->setFlash('success', 'Преподватель успешно удален.');
+        return $this->goBack((!empty(Yii::$app->request->referrer) ? Yii::$app->request->referrer : null));
+    }
+
     public function actionIndex()
     {
-        $teacher = Teacher::find();
+        $teacher = Teacher::find()->with('courseCount')->asArray();
+
+        Yii::$app->user->setReturnUrl(Yii::$app->request->url);
 
         return $this->render('teacher', [
             'teacher' => $teacher,
